@@ -417,11 +417,9 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 {
 	struct ar0234 *priv = (struct ar0234 *)tegracam_get_privdata(tc_dev);
 	struct camera_common_data *s_data = tc_dev->s_data;
-	unsigned int mode_index = 0;
 	int err = 0;
 	const char *config;
 	struct device_node *mode;
-	uint offset = ARRAY_SIZE(ar0234_frmfmt);
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
 	mode = of_get_child_by_name(tc_dev->dev->of_node, "mode0");
@@ -438,22 +436,29 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 		return -EINVAL;
 	}
 
-	/* TODO */
-	err = ar0234_write_table(priv, mode_table[AR0234_MODE_COMMON]);
-	if (err)
-		return err;
-	
-	mode_index = s_data->mode;
-	if (priv->config == FOUR_LANE_CONFIG)
-		err = ar0234_write_table(priv, mode_table[mode_index + offset]);
-	else {
-		dev_dbg(tc_dev->dev, "Writing mode table %d\n", mode_index);
-		err = ar0234_write_table(priv, mode_table[mode_index]);
-	}
+	err = ar0234_write_table(priv, mode_table[AR0234_PLL_CONFIG_24_450_10BIT]);
 	if (err)
 		return err;
 
-	return 0;
+	err = ar0234_write_reg(s_data, AR0234_REG_SERIAL_FORMAT, 0x02); // TODO: 4lane / 2lane
+	if (err)
+		return err;
+
+	err = ar0234_write_table(priv, mode_table[AR0234_MODE_COMMON]);
+	if (err)
+		return err;
+
+	err = ar0234_write_table(priv, mode_table[AR0234_PIXCLK_45MHZ_MFR_SETTINGS]); // TODO: handle 90MHz pixclk
+	if (err)
+		return err;
+
+	err = ar0234_write_reg(s_data, AR0234_REG_MFR_30BA, AR0234_MFR_30BA_GAIN_BITS(6)); // TODO handle 90 MHz pixclk
+	if (err)
+		return err;
+
+	err = ar0234_write_table(priv, mode_table[AR0234_MODE_1920X1200]); // TODO: handle other modes
+
+	return err;
 }
 
 static int ar0234_start_streaming(struct tegracam_device *tc_dev)
@@ -637,7 +642,7 @@ static void ar0234_remove(struct i2c_client *client)
 		return;
 #endif
 	}
-	priv = (struct imx462 *)s_data->priv;
+	priv = (struct ar0234 *)s_data->priv;
 
 	tegracam_v4l2subdev_unregister(priv->tc_dev);
 	tegracam_device_unregister(priv->tc_dev);
