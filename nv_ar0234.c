@@ -62,7 +62,7 @@ struct ar0234 {
 
 static const struct regmap_config sensor_regmap_config = {
 	.reg_bits = 16,
-	.val_bits = 16,
+	.val_bits = 8,
 	.cache_type = REGCACHE_RBTREE,
 	.use_single_read = true,
 	.use_single_write = true,
@@ -100,7 +100,7 @@ static int ar0234_write_table(struct ar0234 *priv, const ar0234_reg table[])
 	dev_dbg(priv->s_data->dev, "%s: Writing register table\n", __func__);
 
 	err = regmap_util_write_table_8(priv->s_data->regmap, table, NULL, 0,
-					IMX462_TABLE_WAIT_MS, IMX462_TABLE_END);
+					AR0234_TABLE_WAIT_MS, AR0234_TABLE_END);
 
 	if (err) {
 		dev_err(priv->s_data->dev, "%s: Failed to write table (%d)\n",
