@@ -26,7 +26,7 @@
 #include "ar0234_mode_tbls.h"
 
 /* AR0234 Register Definitions */
-/* TODO */
+#define AR0234_CHIP_ID 0x0A56
 
 static const struct of_device_id ar0234_of_match[] = {
 	{ .compatible = "onnn,ar0234cs" },
@@ -526,18 +526,18 @@ static int ar0234_board_setup(struct ar0234 *priv)
 		goto done;
 	}
 
-	/* Probe sensor model id registers */
-	err = ar0234_read_reg(s_data, AR0234_MODEL_ID_ADDR, &reg_val);
+	/* Probe sensor chip id register */
+	err = regmap_bulk_read(s_data->regmap, AR0234_REG_CHIP_ID, &reg_val, sizeof(reg_val));
 	if (err) {
 		dev_err(dev, "%s: error during i2c read probe (%d)\n", __func__,
 			err);
 		goto err_reg_probe;
 	}
 
-	dev_dbg(dev, "%s: sensor model id: 0x%x\n", __func__, reg_val);
+	dev_dbg(dev, "%s: sensor chip id: 0x%x\n", __func__, reg_val);
 
-	if (reg_val != AR0234_MODEL_ID_VAL)
-		dev_err(dev, "%s: invalid sensor model id: 0x%x\n", __func__,
+	if (reg_val != AR0234_CHIP_ID) // TODO: handle incorrect chip id
+		dev_err(dev, "%s: invalid sensor chip id: 0x%x\n", __func__,
 			reg_val);
 
 err_reg_probe:

@@ -22,6 +22,7 @@
 	{ ((_address) + 1), (_val) & 0xFF }
 /* clang-format on */
 
+#define AR0234_REG_CHIP_ID 0x3000
 #define AR0234_REG_MODE_SELECT 0x301C
 #define AR0234_REG_VT_PIX_CLK_DIV 0x302A
 #define AR0234_REG_VT_SYS_CLK_DIV 0x302C
