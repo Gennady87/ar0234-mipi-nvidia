@@ -463,29 +463,29 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 
 static int ar0234_start_streaming(struct tegracam_device *tc_dev)
 {
-	struct camera_common_data *s_data = tc_dev->s_data;
+	// struct camera_common_data *s_data = tc_dev->s_data;
 	struct ar0234 *priv = (struct ar0234 *)tegracam_get_privdata(tc_dev);
-	int err = 0;
+	// int err = 0;
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
 
-	if (test_mode) {
-		dev_dbg(tc_dev->dev, "Test mode %d\n", test_mode);
+	// if (test_mode) {
+	// 	dev_dbg(tc_dev->dev, "Test mode %d\n", test_mode);
 
-		err = ar0234_write_table(priv,
-					 mode_table[AR0234_MODE_TEST_PATTERN]);
-		if (err)
-			return err;
+	// 	err = ar0234_write_table(priv,
+	// 				 mode_table[AR0234_MODE_TEST_PATTERN]);
+	// 	if (err)
+	// 		return err;
 
-		/* TODO*/
-		// err = imx462_write_reg(s_data, IMX462_PGCTRL,
-		// 		       IMX462_PGCTRL_REGEN |
-		// 			       IMX462_PGCTRL_THRU |
-		// 			       IMX462_PGCTRL_MODE(test_mode));
+	// 	/* TODO*/
+	// 	// err = imx462_write_reg(s_data, IMX462_PGCTRL,
+	// 	// 		       IMX462_PGCTRL_REGEN |
+	// 	// 			       IMX462_PGCTRL_THRU |
+	// 	// 			       IMX462_PGCTRL_MODE(test_mode));
 
-		if (err)
-			return err;
-	}
+	// 	if (err)
+	// 		return err;
+	// }
 
 	return ar0234_write_table(priv, mode_table[AR0234_START_STREAM]);
 }
