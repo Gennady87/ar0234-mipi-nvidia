@@ -19,7 +19,7 @@
 	fragment@0 {
 		target-path = "/";
 		__overlay__ {
-			tegra-capture-vi  {
+			tegra-capture-vi {
 				num-channels = <1>;
 				ports {
 					#address-cells = <1>;
@@ -150,10 +150,10 @@
 							/* crop co-ordinates */
 
 							/* if true, delay gain setting by one frame to be in sync with exposure */
-							delayed_gain = "false";
+							//delayed_gain = "false";
 
 							/* Convert Gain to unit of dB (decibel) before passing to kernel driver */
-							use_decibel_gain = "true";
+							//use_decibel_gain = "true";
 
 							/* enable CID_SENSOR_MODE_ID for sensor modes selection */
 							use_sensor_mode_id = "true";
