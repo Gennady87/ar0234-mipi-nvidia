@@ -260,7 +260,7 @@
 								active_w = "1920";
 								active_h = "1200";
 								mode_type = "bayer";
-								pixel_phase = "rggb";
+								pixel_phase = "grbg";
 								csi_pixel_bit_depth = "10";
 								readout_orientation = "0";
 								line_length = "4400";
