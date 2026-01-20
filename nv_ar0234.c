@@ -144,8 +144,8 @@ static int ar0234_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 
 static int ar0234_set_group_hold(struct tegracam_device *tc_dev, bool val)
 {
-	/* TODO */
-	return 0;
+	return ar0234_write_reg_8(tc_dev->s_data,
+				  AR0234_REG_GROUPED_PARAMETER_HOLD, val);
 }
 
 static struct tegracam_ctrl_ops ar0234_ctrl_ops = {
