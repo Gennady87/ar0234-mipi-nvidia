@@ -46,18 +46,12 @@ static const u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_SENSOR_MODE_ID,
 };
 
-enum ar0234_config {
-	TWO_LANE_CONFIG,
-	FOUR_LANE_CONFIG,
-};
-
 struct ar0234 {
 	struct i2c_client *i2c_client;
 	struct v4l2_subdev *subdev;
 	u32 frame_length;
 	struct camera_common_data *s_data;
 	struct tegracam_device *tc_dev;
-	enum ar0234_config config;
 };
 
 static const struct regmap_config sensor_regmap_config = {
@@ -78,14 +72,15 @@ static inline int ar0234_read_reg(struct camera_common_data *s_data, u16 addr,
 	return err;
 }
 
-static int ar0234_write_table(struct camera_common_data *s_data, const struct reg_16 table[])
+static int ar0234_write_table(struct camera_common_data *s_data,
+			      const struct reg_16 table[])
 {
 	int err;
 
 	dev_dbg(s_data->dev, "%s: Writing register table\n", __func__);
 
-	err = regmap_util_write_table_16_as_8(s_data->regmap, table, NULL,
-					      0, AR0234_TABLE_WAIT_MS,
+	err = regmap_util_write_table_16_as_8(s_data->regmap, table, NULL, 0,
+					      AR0234_TABLE_WAIT_MS,
 					      AR0234_TABLE_END);
 
 	if (err) {
@@ -112,10 +107,10 @@ static inline int ar0234_write_reg_8(struct camera_common_data *s_data,
 	return err;
 }
 
-static inline int ar0234_write_reg_16(struct camera_common_data *s_data, u16 addr, u16 val)
+static inline int ar0234_write_reg_16(struct camera_common_data *s_data,
+				      u16 addr, u16 val)
 {
 	int err = 0;
-
 	const struct reg_16 table[] = {
 		{ addr, val },
 		{ AR0234_TABLE_END, 0x00 },
@@ -431,34 +426,36 @@ error:
 
 static int ar0234_set_mode(struct tegracam_device *tc_dev)
 {
-	struct ar0234 *priv = (struct ar0234 *)tegracam_get_privdata(tc_dev);
 	struct camera_common_data *s_data = tc_dev->s_data;
-	int err = 0;
-	const char *config;
 	struct device_node *mode;
+	const char *config;
+	unsigned int num_lanes;
+	int err = 0;
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
+
 	mode = of_get_child_by_name(tc_dev->dev->of_node, "mode0");
 	err = of_property_read_string(mode, "num_lanes", &config);
+	if (err)
+		return err;
 
-	if (config[0] == '4') {
-		priv->config = FOUR_LANE_CONFIG;
-		dev_dbg(tc_dev->dev, "Using 4-lane configuration\n");
-	} else if (config[0] == '2') {
-		priv->config = TWO_LANE_CONFIG;
-		dev_dbg(tc_dev->dev, "Using 2-lane configuration\n");
-	} else {
-		dev_err(tc_dev->dev, "Unsupported config\n");
+	err = kstrtouint(config, 10, &num_lanes);
+	if (err)
+		return err;
+
+	if (num_lanes != 2 && num_lanes != 4)
 		return -EINVAL;
-	}
 
+	dev_dbg(tc_dev->dev, "Lane amount: %u\n", num_lanes);
+
+	/* TODO: Based on bit depth? */
 	err = ar0234_write_table(s_data,
 				 mode_table[AR0234_PLL_CONFIG_24_450_10BIT]);
 	if (err)
 		return err;
 
 	err = ar0234_write_reg_16(s_data, AR0234_REG_SERIAL_FORMAT,
-				  0x0200 | 0x02); // TODO: 4lane / 2lane
+				  AR0234_SERIAL_FORMAT_NUM_LANES(num_lanes));
 	if (err)
 		return err;
 
