@@ -99,8 +99,8 @@ static int ar0234_write_table(struct camera_common_data *s_data, const struct re
 	return err;
 }
 
-static inline int ar0234_write_reg(struct camera_common_data *s_data, u16 addr,
-				   u8 val)
+static inline int ar0234_write_reg_8(struct camera_common_data *s_data,
+				     u16 addr, u8 val)
 {
 	int err = 0;
 
@@ -112,22 +112,19 @@ static inline int ar0234_write_reg(struct camera_common_data *s_data, u16 addr,
 	return err;
 }
 
-static int ar0234_write_table(struct ar0234 *priv, const ar0234_reg table[])
+static inline int ar0234_write_reg_16(struct camera_common_data *s_data, u16 addr, u16 val)
 {
-	int err;
+	int err = 0;
 
-	dev_dbg(priv->s_data->dev, "%s: Writing register table\n", __func__);
+	const struct reg_16 table[] = {
+		{ addr, val },
+		{ AR0234_TABLE_END, 0x00 },
+	};
 
-	err = regmap_util_write_table_8(priv->s_data->regmap, table, NULL, 0,
-					AR0234_TABLE_WAIT_MS, AR0234_TABLE_END);
-
-	if (err) {
-		dev_err(priv->s_data->dev, "%s: Failed to write table (%d)\n",
-			__func__, err);
-	} else {
-		dev_dbg(priv->s_data->dev,
-			"%s: Register table written successfully\n", __func__);
-	}
+	err = ar0234_write_table(s_data, table);
+	if (err)
+		dev_err(s_data->dev, "%s: i2c write failed, 0x%x = %x",
+			__func__, addr, val);
 
 	return err;
 }
@@ -525,7 +522,7 @@ static struct camera_common_sensor_ops ar0234_common_ops = {
 	.frmfmt_table = ar0234_frmfmt,
 	.power_on = ar0234_power_on,
 	.power_off = ar0234_power_off,
-	.write_reg = ar0234_write_reg,
+	.write_reg = ar0234_write_reg_8,
 	.read_reg = ar0234_read_reg,
 	.parse_dt = ar0234_parse_dt,
 	.power_get = ar0234_power_get,
