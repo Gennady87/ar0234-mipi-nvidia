@@ -73,7 +73,28 @@ static inline int ar0234_read_reg(struct camera_common_data *s_data, u16 addr,
 	u32 reg_val = 0;
 
 	err = regmap_read(s_data->regmap, addr, &reg_val);
-	*val = reg_val & 0xff;
+	*val = reg_val & 0xFF;
+
+	return err;
+}
+
+static int ar0234_write_table(struct camera_common_data *s_data, const struct reg_16 table[])
+{
+	int err;
+
+	dev_dbg(s_data->dev, "%s: Writing register table\n", __func__);
+
+	err = regmap_util_write_table_16_as_8(s_data->regmap, table, NULL,
+					      0, AR0234_TABLE_WAIT_MS,
+					      AR0234_TABLE_END);
+
+	if (err) {
+		dev_err(s_data->dev, "%s: Failed to write table (%d)\n",
+			__func__, err);
+	} else {
+		dev_dbg(s_data->dev,
+			"%s: Register table written successfully\n", __func__);
+	}
 
 	return err;
 }
