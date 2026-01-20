@@ -452,27 +452,35 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 		return -EINVAL;
 	}
 
-	err = ar0234_write_table(priv, mode_table[AR0234_PLL_CONFIG_24_450_10BIT]);
+	err = ar0234_write_table(s_data,
+				 mode_table[AR0234_PLL_CONFIG_24_450_10BIT]);
 	if (err)
 		return err;
 
-	err = ar0234_write_reg(s_data, AR0234_REG_SERIAL_FORMAT, 0x02); // TODO: 4lane / 2lane
+	err = ar0234_write_reg_16(s_data, AR0234_REG_SERIAL_FORMAT,
+				  0x0200 | 0x02); // TODO: 4lane / 2lane
 	if (err)
 		return err;
 
-	err = ar0234_write_table(priv, mode_table[AR0234_MODE_COMMON]);
+	err = ar0234_write_table(s_data, mode_table[AR0234_MODE_COMMON]);
 	if (err)
 		return err;
 
-	err = ar0234_write_table(priv, mode_table[AR0234_PIXCLK_45MHZ_MFR_SETTINGS]); // TODO: handle 90MHz pixclk
+	err = ar0234_write_table(
+		s_data,
+		mode_table[AR0234_PIXCLK_45MHZ_MFR_SETTINGS]); // TODO: handle 90MHz pixclk
 	if (err)
 		return err;
 
-	err = ar0234_write_reg(s_data, AR0234_REG_MFR_30BA, AR0234_MFR_30BA_GAIN_BITS(6)); // TODO handle 90 MHz pixclk
+	err = ar0234_write_reg_16(
+		s_data, AR0234_REG_MFR_30BA,
+		AR0234_MFR_30BA_GAIN_BITS(6)); // TODO handle 90 MHz pixclk
 	if (err)
 		return err;
 
-	err = ar0234_write_table(priv, mode_table[AR0234_MODE_1920X1200]); // TODO: handle other modes
+	err = ar0234_write_table(
+		s_data,
+		mode_table[AR0234_MODE_1920X1200]); // TODO: handle other modes
 
 	return err;
 }
