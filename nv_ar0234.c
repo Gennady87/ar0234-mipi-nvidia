@@ -488,7 +488,6 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 static int ar0234_start_streaming(struct tegracam_device *tc_dev)
 {
 	// struct camera_common_data *s_data = tc_dev->s_data;
-	struct ar0234 *priv = (struct ar0234 *)tegracam_get_privdata(tc_dev);
 	// int err = 0;
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
@@ -511,16 +510,15 @@ static int ar0234_start_streaming(struct tegracam_device *tc_dev)
 	// 		return err;
 	// }
 
-	return ar0234_write_table(priv, mode_table[AR0234_START_STREAM]);
+	return ar0234_write_reg_8(tc_dev->s_data, AR0234_REG_MODE_SELECT, 0x01);
 }
 
 static int ar0234_stop_streaming(struct tegracam_device *tc_dev)
 {
 	int err;
-	struct ar0234 *priv = (struct ar0234 *)tegracam_get_privdata(tc_dev);
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
-	err = ar0234_write_table(priv, mode_table[AR0234_STOP_STREAM]);
+	err = ar0234_write_reg_8(tc_dev->s_data, AR0234_REG_MODE_SELECT, 0x00);
 
 	return err;
 }
