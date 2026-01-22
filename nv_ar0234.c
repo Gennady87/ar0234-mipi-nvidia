@@ -28,6 +28,10 @@
 /* AR0234 Register Definitions */
 #define AR0234_CHIP_ID 0x0A56
 
+#define AR0234_FLL_MIN (1216)
+#define AR0234_FLL_MAX (0xFFFF)
+#define AR0234_FLL_OVERHEAD (5)
+
 static const struct of_device_id ar0234_of_match[] = {
 	{ .compatible = "onnn,ar0234cs" },
 	{},
@@ -138,8 +142,45 @@ static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
 
 static int ar0234_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 {
-	/* TODO */
-	return 0;
+	struct camera_common_data *s_data = tc_dev->s_data;
+	struct ar0234 *priv = (struct ar0234 *)tc_dev->priv;
+	const struct sensor_mode_properties *mode =
+		&s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
+	u16 frame_length_lines;
+	int err = 0;
+
+	dev_dbg(s_data->dev, "%s: Setting framerate control to: %lld\n",
+		__func__, val);
+
+	if (mode->image_properties.line_length == 0 || val == 0) {
+		dev_err(s_data->dev,
+			"%s:error line_len = %d, frame_rate = %lld\n", __func__,
+			mode->image_properties.line_length, val);
+		return -EINVAL;
+	}
+
+	frame_length_lines = (mode->signal_properties.pixel_clock.val *
+			      mode->control_properties.framerate_factor /
+			      mode->image_properties.line_length / val) -
+			     AR0234_FLL_OVERHEAD;
+
+	if (frame_length_lines < AR0234_FLL_MIN)
+		frame_length_lines = AR0234_FLL_MIN;
+	else if (frame_length_lines > AR0234_FLL_MAX)
+		frame_length_lines = AR0234_FLL_MAX;
+
+	dev_dbg(s_data->dev,
+		"%s: val: %llde-6 [fps], frame_length: %u [lines]\n", __func__,
+		val, frame_length_lines);
+
+	err = ar0234_write_reg_16(s_data, AR0234_REG_FRAME_LENGTH_LINES,
+				  frame_length_lines);
+	if (err)
+		return err;
+
+	priv->frame_length = frame_length_lines;
+
+	return err;
 }
 
 static int ar0234_set_group_hold(struct tegracam_device *tc_dev, bool val)

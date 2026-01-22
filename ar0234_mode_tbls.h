@@ -118,8 +118,6 @@ static struct reg_16 ar0234_mode_1920x1200[] = {
 	{ AR0234_REG_X_ADDR_END, 0x0787 },
 	{ AR0234_REG_X_ODD_INC, 0x0001 },
 	{ AR0234_REG_Y_ODD_INC, 0x0001 },
-	{ AR0234_REG_FRAME_LENGTH_LINES, 2450 },
-	{ AR0234_REG_COARSE_INTEGRATION_TIME, 2449 },
 	{ AR0234_TABLE_END, 0x00 },
 };
 
@@ -142,8 +140,8 @@ static struct reg_16 *mode_table[] = {
 	[AR0234_PIXCLK_45MHZ_MFR_SETTINGS] = ar0234_pixclk_45mhz_mfr_settings,
 };
 
-static const int ar0234_30fps[] = {
-	30,
+static const int ar0234_60fps[] = {
+	60,
 };
 
 /*
@@ -151,7 +149,7 @@ static const int ar0234_30fps[] = {
  * device tree!
  */
 static const struct camera_common_frmfmt ar0234_frmfmt[] = {
-	{ { 1920, 1200 }, ar0234_30fps, 1, 0, AR0234_MODE_1920X1200 },
+	{ { 1920, 1200 }, ar0234_60fps, 1, 0, AR0234_MODE_1920X1200 },
 };
 
 #endif /* __AR0234_MODE_TBLS_H__ */
