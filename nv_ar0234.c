@@ -28,6 +28,8 @@
 /* AR0234 Register Definitions */
 #define AR0234_CHIP_ID 0x0A56
 
+#define AR0234_CIT_MIN (2)
+#define AR0234_CIT_MARGIN (1)
 #define AR0234_FLL_MIN (1216)
 #define AR0234_FLL_MAX (0xFFFF)
 #define AR0234_FLL_OVERHEAD (5)
@@ -136,8 +138,39 @@ static int ar0234_set_gain(struct tegracam_device *tc_dev, s64 val)
 
 static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
 {
-	/* TODO */
-	return 0;
+	struct camera_common_data *s_data = tc_dev->s_data;
+	struct ar0234 *priv = (struct ar0234 *)tc_dev->priv;
+	const struct sensor_mode_properties *mode =
+		&s_data->sensor_props.sensor_modes[s_data->mode];
+	u16 cit;
+
+	dev_dbg(s_data->dev, "%s: val: %lld\n", __func__, val);
+
+	if (mode->control_properties.exposure_factor == 0 ||
+	    mode->image_properties.line_length == 0) {
+		dev_err(s_data->dev,
+			"%s:error line_len = %d, exposure_factor = %d\n",
+			__func__, mode->control_properties.exposure_factor,
+			mode->image_properties.line_length);
+		return -EINVAL;
+	}
+
+	cit = mode->signal_properties.pixel_clock.val * val /
+	      mode->image_properties.line_length /
+	      mode->control_properties.exposure_factor;
+
+	if (priv->frame_length == 0)
+		priv->frame_length = AR0234_FLL_MIN;
+
+	if (cit < AR0234_CIT_MIN)
+		cit = AR0234_CIT_MIN;
+	else if (cit > (priv->frame_length - AR0234_CIT_MARGIN))
+		cit = priv->frame_length - AR0234_CIT_MARGIN;
+
+	dev_dbg(s_data->dev, "%s: setting CIT to %d\n", __func__, cit);
+
+	return ar0234_write_reg_16(s_data, AR0234_REG_COARSE_INTEGRATION_TIME,
+				   cit);
 }
 
 static int ar0234_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
