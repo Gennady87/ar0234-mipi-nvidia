@@ -150,10 +150,10 @@
 							/* crop co-ordinates */
 
 							/* if true, delay gain setting by one frame to be in sync with exposure */
-							//delayed_gain = "false";
+							delayed_gain = "false";
 
 							/* Convert Gain to unit of dB (decibel) before passing to kernel driver */
-							//use_decibel_gain = "true";
+							use_decibel_gain = "false";
 
 							/* enable CID_SENSOR_MODE_ID for sensor modes selection */
 							use_sensor_mode_id = "true";
@@ -267,13 +267,13 @@
 								inherent_gain = "1";
 								mclk_multiplier = "4";
 								pix_clk_hz = "180000000";
-								gain_factor = "10";
+								gain_factor = "100";
 								framerate_factor = "1000000";
 								exposure_factor = "1000000";
-								min_gain_val = "0"; /* 0dB */
-								max_gain_val = "294"; /* 29.4dB */
-								step_gain_val = "3"; /* 0.3dB */
-								default_gain = "0"; /* 0dB */
+								min_gain_val = "168"; /* 1.68 */
+								max_gain_val = "1600"; /* 16.0 */
+								step_gain_val = "1"; /* 0.01 */
+								default_gain = "168";
 								min_hdr_ratio = "1";
 								max_hdr_ratio = "1";
 								min_framerate = "2000000"; /* 2.0 fps */
