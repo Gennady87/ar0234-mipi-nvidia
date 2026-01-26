@@ -132,8 +132,28 @@ static inline int ar0234_write_reg_16(struct camera_common_data *s_data,
 
 static int ar0234_set_gain(struct tegracam_device *tc_dev, s64 val)
 {
-	/* TODO */
-	return 0;
+	struct camera_common_data *s_data = tc_dev->s_data;
+	const struct sensor_mode_properties *mode =
+		&s_data->sensor_props.sensor_modes[s_data->mode];
+	u32 gain_factor = mode->control_properties.gain_factor;
+	u8 reg_coarse = ilog2(val / gain_factor);
+	u8 reg_fine = 0;
+
+	if (reg_coarse < 4) {
+		uint16_t gain_coarse = (1 << reg_coarse) * gain_factor;
+		reg_fine = (32 * (val - gain_coarse)) / val;
+	}
+
+	if (reg_coarse % 2 != 0)
+		reg_fine &= ~0x1;
+
+	dev_dbg(s_data->dev,
+		"%s: val: %lld, reg_coarse: %d, reg_fine: %d, gain_reg: 0x%x\n",
+		__func__, val, reg_coarse, reg_fine,
+		(reg_coarse << 4) | (reg_fine & 0xF));
+
+	return ar0234_write_reg_16(s_data, AR0234_REG_ANALOG_GAIN,
+				   (reg_coarse << 4) | (reg_fine & 0xF));
 }
 
 static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
