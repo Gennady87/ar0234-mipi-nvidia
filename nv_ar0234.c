@@ -56,6 +56,7 @@ struct ar0234 {
 	struct camera_common_data *s_data;
 	struct tegracam_device *tc_dev;
 	u16 frame_length_lines;
+	u16 mfr_30ba_val;
 };
 
 static const struct regmap_config sensor_regmap_config = {
@@ -131,11 +132,15 @@ static inline int ar0234_write_reg_16(struct camera_common_data *s_data,
 static int ar0234_set_gain(struct tegracam_device *tc_dev, s64 val)
 {
 	struct camera_common_data *s_data = tc_dev->s_data;
+	struct ar0234 *priv = (struct ar0234 *)tc_dev->priv;
 	const struct sensor_mode_properties *mode =
 		&s_data->sensor_props.sensor_modes[s_data->mode];
 	u32 gain_factor = mode->control_properties.gain_factor;
+	u16 mfr_30ba_val = 0;
 	u8 reg_coarse = ilog2(val / gain_factor);
 	u8 reg_fine = 0;
+	u8 reg_gain = 0;
+	int err = 0;
 
 	if (reg_coarse < 4) {
 		uint16_t gain_coarse = (1 << reg_coarse) * gain_factor;
@@ -145,13 +150,32 @@ static int ar0234_set_gain(struct tegracam_device *tc_dev, s64 val)
 	if (reg_coarse % 2 != 0)
 		reg_fine &= ~0x1;
 
-	dev_dbg(s_data->dev,
-		"%s: val: %lld, reg_coarse: %d, reg_fine: %d, gain_reg: 0x%x\n",
-		__func__, val, reg_coarse, reg_fine,
-		(reg_coarse << 4) | (reg_fine & 0xF));
+	reg_gain = (reg_coarse << 4) | (reg_fine & 0xF);
 
-	return ar0234_write_reg_16(s_data, AR0234_REG_ANALOG_GAIN,
-				   (reg_coarse << 4) | (reg_fine & 0xF));
+	if (reg_gain < 0x36) {
+		mfr_30ba_val = AR0234_MFR_30BA_GAIN_BITS(6);
+	} else {
+		mfr_30ba_val = AR0234_MFR_30BA_GAIN_BITS(0);
+	}
+
+	if (priv->mfr_30ba_val != mfr_30ba_val) {
+		dev_dbg(s_data->dev, "%s: Update MFR_30BA val: 0x%x\n",
+			__func__, mfr_30ba_val);
+
+		err = ar0234_write_reg_16(s_data, AR0234_REG_MFR_30BA,
+					  mfr_30ba_val);
+		if (err)
+			return err;
+
+		priv->mfr_30ba_val = mfr_30ba_val;
+	}
+
+	dev_dbg(s_data->dev, "%s: val: %lld, gain_reg: 0x%x\n", __func__, val,
+		reg_gain);
+
+	err = ar0234_write_reg_16(s_data, AR0234_REG_ANALOG_GAIN, reg_gain);
+
+	return err;
 }
 
 static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
@@ -533,7 +557,7 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 
 	dev_dbg(tc_dev->dev, "Lane amount: %u\n", num_lanes);
 
-	/* TODO: Based on bit depth? */
+	/* TODO: Based on bit depth/pixclk? */
 	err = ar0234_write_table(s_data,
 				 mode_table[AR0234_PLL_CONFIG_24_450_10BIT]);
 	if (err)
@@ -559,6 +583,9 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 		AR0234_MFR_30BA_GAIN_BITS(6)); // TODO handle 90 MHz pixclk
 	if (err)
 		return err;
+
+	priv->mfr_30ba_val =
+		AR0234_MFR_30BA_GAIN_BITS(6); // TODO handle 90 MHz pixclk
 
 	err = ar0234_write_table(
 		s_data,
