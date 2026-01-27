@@ -28,7 +28,7 @@
 
 #define AR0234_CIT_MIN (2)
 #define AR0234_CIT_MARGIN (1)
-#define AR0234_FLL_MIN (1216)
+#define AR0234_FLL_DEFAULT (1216)
 #define AR0234_FLL_MAX (0xFFFF)
 #define AR0234_FLL_OVERHEAD (5)
 
@@ -53,9 +53,9 @@ static const u32 ctrl_cid_list[] = {
 struct ar0234 {
 	struct i2c_client *i2c_client;
 	struct v4l2_subdev *subdev;
-	u32 frame_length;
 	struct camera_common_data *s_data;
 	struct tegracam_device *tc_dev;
+	u16 frame_length_lines;
 };
 
 static const struct regmap_config sensor_regmap_config = {
@@ -162,8 +162,6 @@ static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
 		&s_data->sensor_props.sensor_modes[s_data->mode];
 	u16 cit;
 
-	dev_dbg(s_data->dev, "%s: val: %lld\n", __func__, val);
-
 	if (mode->control_properties.exposure_factor == 0 ||
 	    mode->image_properties.line_length == 0) {
 		dev_err(s_data->dev,
@@ -177,15 +175,12 @@ static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
 	      mode->image_properties.line_length /
 	      mode->control_properties.exposure_factor;
 
-	if (priv->frame_length == 0)
-		priv->frame_length = AR0234_FLL_MIN;
-
 	if (cit < AR0234_CIT_MIN)
 		cit = AR0234_CIT_MIN;
 	else if (cit > (priv->frame_length - AR0234_CIT_MARGIN))
 		cit = priv->frame_length - AR0234_CIT_MARGIN;
 
-	dev_dbg(s_data->dev, "%s: setting CIT to %d\n", __func__, cit);
+	dev_dbg(s_data->dev, "%s: val %lld, CIT %d\n", __func__, val, cit);
 
 	return ar0234_write_reg_16(s_data, AR0234_REG_COARSE_INTEGRATION_TIME,
 				   cit);
@@ -199,9 +194,6 @@ static int ar0234_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 		&s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
 	u16 frame_length_lines;
 	int err = 0;
-
-	dev_dbg(s_data->dev, "%s: Setting framerate control to: %lld\n",
-		__func__, val);
 
 	if (mode->image_properties.line_length == 0 || val == 0) {
 		dev_err(s_data->dev,
@@ -229,7 +221,7 @@ static int ar0234_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 	if (err)
 		return err;
 
-	priv->frame_length = frame_length_lines;
+	priv->frame_length_lines = frame_length_lines;
 
 	return err;
 }
@@ -519,6 +511,7 @@ error:
 static int ar0234_set_mode(struct tegracam_device *tc_dev)
 {
 	struct camera_common_data *s_data = tc_dev->s_data;
+	struct ar0234 *priv = (struct ar0234 *)tc_dev->priv;
 	struct device_node *mode;
 	const char *config;
 	unsigned int num_lanes;
@@ -570,6 +563,11 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 	err = ar0234_write_table(
 		s_data,
 		mode_table[AR0234_MODE_1920X1200]); // TODO: handle other modes
+
+	if (err)
+		return err;
+
+	priv->frame_length_lines = AR0234_FLL_DEFAULT;
 
 	return err;
 }
