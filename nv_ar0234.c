@@ -29,6 +29,7 @@
 #define AR0234_CIT_MIN (2)
 #define AR0234_CIT_MARGIN (1)
 #define AR0234_FLL_DEFAULT (1216)
+#define AR0234_FLL_MIN (1216)
 #define AR0234_FLL_MAX (0xFFFF)
 #define AR0234_FLL_OVERHEAD (5)
 
@@ -201,8 +202,8 @@ static int ar0234_set_exposure(struct tegracam_device *tc_dev, s64 val)
 
 	if (cit < AR0234_CIT_MIN)
 		cit = AR0234_CIT_MIN;
-	else if (cit > (priv->frame_length - AR0234_CIT_MARGIN))
-		cit = priv->frame_length - AR0234_CIT_MARGIN;
+	else if (cit > (priv->frame_length_lines - AR0234_CIT_MARGIN))
+		cit = priv->frame_length_lines - AR0234_CIT_MARGIN;
 
 	dev_dbg(s_data->dev, "%s: val %lld, CIT %d\n", __func__, val, cit);
 
