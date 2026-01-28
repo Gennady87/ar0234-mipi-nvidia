@@ -317,16 +317,15 @@ static int ar0234_power_on(struct camera_common_data *s_data)
 
 skip_power_seqn:
 	if (pw->reset_gpio) {
+		usleep_range(1000, 2000);
+
 		if (gpiod_cansleep(gpio_to_desc(pw->reset_gpio)))
 			gpio_set_value_cansleep(pw->reset_gpio, 1);
 		else
 			gpio_set_value(pw->reset_gpio, 1);
 	}
 
-	/* TODO */
-	/* Need to wait for t4 + t5 + t9 + t10 time as per the data sheet */
-	/* t4 - 200us, t5 - 21.2ms, t9 - 1.2ms t10 - 270 ms */
-	usleep_range(300000, 300100);
+	usleep_range(10000, 20000);
 
 	pw->state = SWITCH_ON;
 
