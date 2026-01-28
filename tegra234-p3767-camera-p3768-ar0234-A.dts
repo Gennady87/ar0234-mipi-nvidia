@@ -83,7 +83,7 @@
 					module0 {
 						badge = "kurokesu_front_234M12";
 						position = "front";
-						orientation = "1";
+						orientation = "0";
 						drivernode0 {
 							pcl_id = "v4l2_sensor";
 							sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/rbpcv3_ar0234_a@10";
