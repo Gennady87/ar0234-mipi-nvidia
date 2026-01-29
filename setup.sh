@@ -12,6 +12,5 @@ cp $DRV_FILES_DIR/tegra234-p3767-camera-p3768-ar0234-A.dtbo /boot
 echo "Installing kernel module"
 cp $DRV_FILES_DIR/nv_ar0234.ko /lib/modules/$(uname -r)/updates/drivers/media/i2c
 depmod
-echo nv_ar0234 | tee /etc/modules-load.d/kurokesu.conf
 
 echo "Sucess! Don't forget to run \"sudo /opt/nvidia/jetson-io/jetson-io.py\""
