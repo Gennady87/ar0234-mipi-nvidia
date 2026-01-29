@@ -637,18 +637,23 @@ static int ar0234_board_setup(struct ar0234 *priv)
 	}
 
 	/* Probe sensor chip id register */
-	err = regmap_bulk_read(s_data->regmap, AR0234_REG_CHIP_ID, &reg_val, sizeof(reg_val));
+	err = regmap_bulk_read(s_data->regmap, AR0234_REG_CHIP_ID, &reg_val,
+			       sizeof(reg_val));
 	if (err) {
 		dev_err(dev, "%s: error during i2c read probe (%d)\n", __func__,
 			err);
 		goto err_reg_probe;
 	}
 
-	dev_dbg(dev, "%s: sensor chip id: 0x%x\n", __func__, reg_val);
+	reg_val = be16_to_cpu(reg_val);
 
-	if (reg_val != AR0234_CHIP_ID) // TODO: handle incorrect chip id
-		dev_err(dev, "%s: invalid sensor chip id: 0x%x\n", __func__,
-			reg_val);
+	if (reg_val != AR0234_CHIP_ID) {
+		dev_err(dev,
+			"%s: invalid sensor chip id: 0x%x (expected 0x%x)\n",
+			__func__, reg_val, AR0234_CHIP_ID);
+		err = -ENODEV;
+		goto err_reg_probe;
+	}
 
 err_reg_probe:
 	ar0234_power_off(s_data);
