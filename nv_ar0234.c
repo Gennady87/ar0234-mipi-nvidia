@@ -6,7 +6,7 @@
  * Copyright (c) 2026, UAB Kurokesu. All rights reserved.
  */
 
-#define DEBUG
+// #define DEBUG
 
 #include <nvidia/conftest.h>
 
@@ -39,10 +39,6 @@ static const struct of_device_id ar0234_of_match[] = {
 };
 
 MODULE_DEVICE_TABLE(of, ar0234_of_match);
-
-/* TODO */
-// static int test_mode;
-// module_param(test_mode, int, 0644);
 
 static const u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_GAIN,
@@ -557,7 +553,6 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 
 	dev_dbg(tc_dev->dev, "Lane amount: %u\n", num_lanes);
 
-	/* TODO: Based on bit depth/pixclk? */
 	err = ar0234_write_table(s_data,
 				 mode_table[AR0234_PLL_CONFIG_24_450_10BIT]);
 	if (err)
@@ -572,24 +567,19 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 	if (err)
 		return err;
 
-	err = ar0234_write_table(
-		s_data,
-		mode_table[AR0234_PIXCLK_45MHZ_MFR_SETTINGS]); // TODO: handle 90MHz pixclk
+	err = ar0234_write_table(s_data,
+				 mode_table[AR0234_PIXCLK_45MHZ_MFR_SETTINGS]);
 	if (err)
 		return err;
 
-	err = ar0234_write_reg_16(
-		s_data, AR0234_REG_MFR_30BA,
-		AR0234_MFR_30BA_GAIN_BITS(6)); // TODO handle 90 MHz pixclk
+	err = ar0234_write_reg_16(s_data, AR0234_REG_MFR_30BA,
+				  AR0234_MFR_30BA_GAIN_BITS(6));
 	if (err)
 		return err;
 
-	priv->mfr_30ba_val =
-		AR0234_MFR_30BA_GAIN_BITS(6); // TODO handle 90 MHz pixclk
+	priv->mfr_30ba_val = AR0234_MFR_30BA_GAIN_BITS(6);
 
-	err = ar0234_write_table(
-		s_data,
-		mode_table[AR0234_MODE_1920X1200]); // TODO: handle other modes
+	err = ar0234_write_table(s_data, mode_table[AR0234_MODE_1920X1200]);
 
 	if (err)
 		return err;
@@ -601,28 +591,7 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 
 static int ar0234_start_streaming(struct tegracam_device *tc_dev)
 {
-	// struct camera_common_data *s_data = tc_dev->s_data;
-	// int err = 0;
-
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
-
-	// if (test_mode) {
-	// 	dev_dbg(tc_dev->dev, "Test mode %d\n", test_mode);
-
-	// 	err = ar0234_write_table(priv,
-	// 				 mode_table[AR0234_MODE_TEST_PATTERN]);
-	// 	if (err)
-	// 		return err;
-
-	// 	/* TODO*/
-	// 	// err = imx462_write_reg(s_data, IMX462_PGCTRL,
-	// 	// 		       IMX462_PGCTRL_REGEN |
-	// 	// 			       IMX462_PGCTRL_THRU |
-	// 	// 			       IMX462_PGCTRL_MODE(test_mode));
-
-	// 	if (err)
-	// 		return err;
-	// }
 
 	return ar0234_write_reg_8(tc_dev->s_data, AR0234_REG_MODE_SELECT, 0x01);
 }
