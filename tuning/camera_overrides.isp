@@ -16,11 +16,11 @@
 #* =============================================================
 #* ISP Configuration Override File
 #* Copyright (c) 2012-2022, NVIDIA CORPORATION.  All rights reserved.
-#* Model:model
-#* Integrator:
+#* Model:234x-CSI-M12x
+#* Integrator:UAB Kurokesu
 #* Part#:
-#* Sensor:sensor
-#* Size:
+#* Sensor:AR0234
+#* Size:1920x1200
 #* Version: version
 #* FileName & Location:/data/nvcam/settings/camera_overrides.isp
 #* Updated:Fri Feb 25 15:37:50 2022 PST
@@ -272,10 +272,10 @@ lensShading.falloff.Video[5] = {32.0, 30.0};
 #-----------------------------------------------------
 
 # AWB
-awb.NumGrayLineSoftClampPoints	 = 2; 
-awb.GrayLineSoftClamp[0]  	 = {0.4200,  0.4200}; 
-awb.GrayLineSoftClamp[1]  	 = {1.3281,  1.3281}; 
-awb.GrayLineSoftClamp[2]  	 = {0.0000,  0.0000}; 
+awb.NumGrayLineSoftClampPoints	 = 3; 
+awb.GrayLineSoftClamp[0]  	 = {0.6157,  0.6157}; 
+awb.GrayLineSoftClamp[1]  	 = {0.9841,  0.9841}; 
+awb.GrayLineSoftClamp[2]  	 = {1.2207,  1.2207}; 
 awb.GrayLineSoftClamp[3]  	 = {0.0000,  0.0000}; 
 awb.GrayLineSoftClamp[4]  	 = {0.0000,  0.0000}; 
 awb.GrayLineSoftClamp[5]  	 = {0.0000,  0.0000}; 
@@ -291,21 +291,21 @@ awb.GrayLineSoftClamp[14] 	 = {0.0000,  0.0000};
 awb.GrayLineSoftClamp[15] 	 = {0.0000,  0.0000}; 
 awb.GrayLineSoftClampSlopeBeforeFirstPoint	 = 0.0000; 
 awb.GrayLineSoftClampSlopeAfterLastPoint	 = 0.0000; 
-awb.GrayLineThickness     	 = 0.0443; 
-awb.HighU                 	 = 1.3281; 
-awb.LowU                  	 = 0.3000; 
-awb.v4.NumGrayLineSoftClampPoints	 = 3; 
-awb.v4.GrayLineSoftClamp[0]	 = {0.3000,  0.3000}; 
-awb.v4.GrayLineSoftClamp[1]	 = {0.4200,  0.4200}; 
-awb.v4.GrayLineSoftClamp[2]	 = {1.3281,  1.3281}; 
-awb.v4.GrayLineSoftClamp[3]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[4]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[5]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[6]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[7]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[8]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[9]	 = {0.0000,  0.0000}; 
-awb.v4.GrayLineSoftClamp[10]	 = {0.0000,  0.0000}; 
+awb.GrayLineThickness     	 = 0.1943; 
+awb.HighU                 	 = 1.2207; 
+awb.LowU                  	 = 0.5023; 
+awb.v4.NumGrayLineSoftClampPoints	 = 11; 
+awb.v4.GrayLineSoftClamp[0]	 = {0.5023,  0.5023}; 
+awb.v4.GrayLineSoftClamp[1]	 = {0.6157,  0.6157}; 
+awb.v4.GrayLineSoftClamp[2]	 = {0.6241,  0.6241}; 
+awb.v4.GrayLineSoftClamp[3]	 = {0.7148,  0.7148}; 
+awb.v4.GrayLineSoftClamp[4]	 = {0.8219,  0.8219}; 
+awb.v4.GrayLineSoftClamp[5]	 = {0.9403,  0.9403}; 
+awb.v4.GrayLineSoftClamp[6]	 = {0.9841,  0.9841}; 
+awb.v4.GrayLineSoftClamp[7]	 = {1.1142,  1.1142}; 
+awb.v4.GrayLineSoftClamp[8]	 = {1.1309,  1.1309}; 
+awb.v4.GrayLineSoftClamp[9]	 = {1.2207,  1.2207}; 
+awb.v4.GrayLineSoftClamp[10]	 = {1.2614,  1.2614}; 
 awb.v4.GrayLineSoftClamp[11]	 = {0.0000,  0.0000}; 
 awb.v4.GrayLineSoftClamp[12]	 = {0.0000,  0.0000}; 
 awb.v4.GrayLineSoftClamp[13]	 = {0.0000,  0.0000}; 
@@ -313,35 +313,41 @@ awb.v4.GrayLineSoftClamp[14]	 = {0.0000,  0.0000};
 awb.v4.GrayLineSoftClamp[15]	 = {0.0000,  0.0000}; 
 awb.v4.GrayLineSoftClampSlopeBeforeFirstPoint	 = 0.0000; 
 awb.v4.GrayLineSoftClampSlopeAfterLastPoint	 = 0.0000; 
-awb.v4.GrayLineThickness  	 = 0.2216; 
-awb.v4.HighU              	 = 1.3281; 
-awb.v4.LowU               	 = 0.4200; 
+awb.v4.GrayLineThickness  	 = 0.4821; 
+awb.v4.HighU              	 = 1.2648; 
+awb.v4.LowU               	 = 0.4772; 
 
 # AWB
-awb.GrayLineSlope         	 = -1.5829; 
-awb.GrayLineIntercept     	 = 2.6332; 
-awb.UtoMIRED              	 = {-360.970559, 435.896557}; 
-awb.MIREDtoU              	 = {-0.002635596969, 1.175889617770}; 
-awb.UtoCCT                	 = {7307.377880, 627.966366}; 
-awb.CCTtoU                	 = {0.000136846620, -0.085929495582}; 
+awb.GrayLineSlope         	 = -1.2843; 
+awb.GrayLineIntercept     	 = 2.5248; 
+awb.UtoMIRED              	 = {-401.127832, 606.814519}; 
+awb.MIREDtoU              	 = {-0.002492641738, 1.512308542163}; 
+awb.UtoCCT                	 = {7124.831506,-1652.413829}; 
+awb.CCTtoU                	 = {0.000140354281, 0.232017483516}; 
 awb.NumDiscreteLights     	 = 0; 
-awb.v4.GrayLineSlope      	 = -1.5829; 
-awb.v4.GrayLineIntercept  	 = 2.6332; 
-awb.v4.UtoMIRED           	 = {-246.819415, 352.789234}; 
-awb.v4.MIREDtoU           	 = {-0.004051545137, 1.429341506065}; 
-awb.v4.UtoCCT             	 = {7275.002254, 651.537322}; 
-awb.v4.CCTtoU             	 = {0.000137457002, -0.089558367051}; 
-awb.v4.FusionNumLights    	 = 5; 
-awb.v4.FusionLights[0]    	 = {202,133,130, 71}; 
-awb.v4.FusionLights[1]    	 = {211,159,156, 84}; 
-awb.v4.FusionLights[2]    	 = {220,186,183, 90}; 
-awb.v4.FusionLights[3]    	 = {183,173,172,105}; 
-awb.v4.FusionLights[4]    	 = {145,161,160,105}; 
-awb.v4.FusionInitLight    	 = 4; 
+awb.v4.GrayLineSlope      	 = -1.2887; 
+awb.v4.GrayLineIntercept  	 = 2.5296; 
+awb.v4.UtoMIRED           	 = {-401.127832, 606.814519}; 
+awb.v4.MIREDtoU           	 = {-0.002492641738, 1.512308542163}; 
+awb.v4.UtoCCT             	 = {7124.831506,-1652.413829}; 
+awb.v4.CCTtoU             	 = {0.000140354281, 0.232017483516}; 
+awb.v4.FusionNumLights    	 = 11; 
+awb.v4.FusionLights[0]    	 = {903,741,740,243}; 
+awb.v4.FusionLights[1]    	 = {909,845,844,320}; 
+awb.v4.FusionLights[2]    	 = {901,903,902,323}; 
+awb.v4.FusionLights[3]    	 = {891,904,905,398}; 
+awb.v4.FusionLights[4]    	 = {762,907,906,417}; 
+awb.v4.FusionLights[5]    	 = {641,905,904,433}; 
+awb.v4.FusionLights[6]    	 = {706,903,904,559}; 
+awb.v4.FusionLights[7]    	 = {643,908,907,677}; 
+awb.v4.FusionLights[8]    	 = {599,903,902,590}; 
+awb.v4.FusionLights[9]    	 = {607,905,904,771}; 
+awb.v4.FusionLights[10]    	 = {592,905,904,811}; 
+awb.v4.FusionInitLight    	 = 6; 
 # CCM
-colorCorrection.srgbMatrix[0]	 = {1.06768601,-0.73210167,-0.25214392}; 
-colorCorrection.srgbMatrix[1]	 = {-0.06259092, 1.73298757,-0.52931734}; 
-colorCorrection.srgbMatrix[2]	 = {-0.00509509,-0.00088589, 1.78146126}; 
+colorCorrection.srgbMatrix[0]	 = {1.75621000,-0.32671000,-0.04387000}; 
+colorCorrection.srgbMatrix[1]	 = {-0.58837000, 1.32645000,-0.82893000}; 
+colorCorrection.srgbMatrix[2]	 = {-0.16784000, 0.00026000, 1.87280000}; 
 # - sensor gain value corresponding to ISO100
 ae.PerChannelGainAdjustment = {1.0, 1.0, 1.0, 1.0}; 
 
