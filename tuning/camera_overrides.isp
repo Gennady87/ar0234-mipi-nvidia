@@ -350,10 +350,10 @@ opticalBlack.manualBiasR  	 = 42;
 opticalBlack.manualBiasGR 	 = 42; 
 opticalBlack.manualBiasGB 	 = 42; 
 opticalBlack.manualBiasB  	 = 42; 
-opticalBlack.float.manualBiasR	 = 0.04101563; 
-opticalBlack.float.manualBiasGR	 = 0.04101563; 
-opticalBlack.float.manualBiasGB	 = 0.04101563; 
-opticalBlack.float.manualBiasB	 = 0.04101563; 
+opticalBlack.float.manualBiasR	 = 0.04105572; 
+opticalBlack.float.manualBiasGR	 = 0.04105572; 
+opticalBlack.float.manualBiasGB	 = 0.04105572; 
+opticalBlack.float.manualBiasB	 = 0.04105572; 
 #-----------------------------------------------------
 # Lens Shading Parameters 
 ap15Function.lensShading = FALSE;
