@@ -35,14 +35,11 @@ sudo ./setup.sh
 
 ---
 
-To install the ISP tuning file for the AR0234 camera, run:
+To install the ISP tuning file, run:
 
 ```bash
 sudo cp ./tuning/camera_overrides.isp /var/nvidia/nvcam/settings
 ```
-
-> [!NOTE]
-> The AR0234 ISP tuning is still experimental and may not provide optimal image quality in all scenarios.
 
 To uninstall and restore the default ISP parameters, remove the overrides file:
 
