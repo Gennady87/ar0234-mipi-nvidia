@@ -15,11 +15,11 @@ VERSION=$(grep '^PACKAGE_VERSION=' "$SCRIPT_DIR/dkms.conf" | cut -d'"' -f2)
 PACKAGE_NAME=$(grep '^PACKAGE_NAME=' "$SCRIPT_DIR/dkms.conf" | cut -d'"' -f2)
 DKMS_SRC="/usr/src/${PACKAGE_NAME}-${VERSION}"
 
-# --- Install DKMS if not present ---
+# --- Check prerequisites ---
 
 if ! command -v dkms &>/dev/null; then
-    echo "Installing dkms..."
-    apt-get update && apt-get install -y dkms
+    echo "Error: dkms is not installed. Install it with: sudo apt install dkms"
+    exit 1
 fi
 
 # --- Remove old DKMS registration if present ---
