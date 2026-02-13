@@ -42,7 +42,10 @@ CONFTEST_H := $(LOCAL_INCLUDE)/nvidia/conftest.h
 # --- Targets ---
 .PHONY: all dtbo module clean install
 
-all: dtbo module
+all: $(BUILD_DIR)/$(DTBO) $(BUILD_DIR)/nv_ar0234.ko
+
+dtbo: $(BUILD_DIR)/$(DTBO)
+module: $(BUILD_DIR)/nv_ar0234.ko
 
 $(DT_HEADER): | $(BUILD_DIR)
 	@echo "  FETCH   NVIDIA device tree headers"
@@ -53,8 +56,6 @@ $(CONFTEST_H): | $(BUILD_DIR)
 	@./scripts/conftest.sh $(LOCAL_INCLUDE) $(KDIR)
 
 # Build device tree overlay
-dtbo: $(BUILD_DIR)/$(DTBO)
-
 $(BUILD_DIR)/$(DTBO): $(DTS) $(DT_HEADER) | $(BUILD_DIR)
 	@echo "  CPP     $<"
 	@$(CPP) $(CPP_FLAGS) -o $(BUILD_DIR)/$(DTS:.dts=.dts.preprocessed) $<
@@ -64,7 +65,7 @@ $(BUILD_DIR)/$(DTBO): $(DTS) $(DT_HEADER) | $(BUILD_DIR)
 	@echo "  Built:  $@"
 
 # Build kernel module -- all kbuild artifacts go into build/
-module: $(CONFTEST_H) | $(BUILD_DIR)
+$(BUILD_DIR)/nv_ar0234.ko: $(KBUILD_SRCS) $(CONFTEST_H) | $(BUILD_DIR)
 	@# Generate Kbuild and symlink source files into build/
 	@echo "obj-m += nv_ar0234.o" > $(BUILD_DIR)/Kbuild
 	@for f in $(KBUILD_SRCS); do \
@@ -80,7 +81,7 @@ module: $(CONFTEST_H) | $(BUILD_DIR)
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 
-install: all
+install: $(BUILD_DIR)/$(DTBO) $(BUILD_DIR)/nv_ar0234.ko
 	@echo "  INSTALL $(DTBO) -> /boot/$(DTBO)"
 	sudo cp $(BUILD_DIR)/$(DTBO) /boot/$(DTBO)
 	@echo "  INSTALL nv_ar0234.ko -> /lib/modules/$(shell uname -r)/updates/drivers/media/i2c/"
