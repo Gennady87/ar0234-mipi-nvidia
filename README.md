@@ -1,6 +1,7 @@
 # ar0234 MIPI NVIDIA driver
 
-Tested with NVIDIA Jetson Linux 36.4.4 / 36.5.0 (JetPack 6.2.1 / 6.2.2).
+![JetPack 6.2.1](https://img.shields.io/badge/JetPack-6.2.1-green)
+![JetPack 6.2.2](https://img.shields.io/badge/JetPack-6.2.2-green)
 
 ## Quickstart
 
