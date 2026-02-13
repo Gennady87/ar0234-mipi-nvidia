@@ -85,7 +85,7 @@ install: $(BUILD_DIR)/$(DTBO) $(BUILD_DIR)/nv_ar0234.ko
 	@echo "  INSTALL $(DTBO) -> /boot/$(DTBO)"
 	sudo cp $(BUILD_DIR)/$(DTBO) /boot/$(DTBO)
 	@echo "  RELOAD  nv_ar0234.ko"
-	-@sudo rmmod nv_ar0234 2>/dev/null
+	@sudo rmmod nv_ar0234 2>/dev/null || true
 	sudo insmod $(BUILD_DIR)/nv_ar0234.ko
 	@echo "  Done. Module loaded (non-persistent, use setup.sh for permanent install)."
 
