@@ -84,10 +84,10 @@ $(BUILD_DIR):
 install: $(BUILD_DIR)/$(DTBO) $(BUILD_DIR)/nv_ar0234.ko
 	@echo "  INSTALL $(DTBO) -> /boot/$(DTBO)"
 	sudo cp $(BUILD_DIR)/$(DTBO) /boot/$(DTBO)
-	@echo "  INSTALL nv_ar0234.ko -> /lib/modules/$(shell uname -r)/updates/drivers/media/i2c/"
-	sudo cp $(BUILD_DIR)/nv_ar0234.ko /lib/modules/$(shell uname -r)/updates/drivers/media/i2c/
-	sudo depmod
-	@echo "  Done. Run 'sudo /opt/nvidia/jetson-io/jetson-io.py' to configure."
+	@echo "  RELOAD  nv_ar0234.ko"
+	-@sudo rmmod nv_ar0234 2>/dev/null
+	sudo insmod $(BUILD_DIR)/nv_ar0234.ko
+	@echo "  Done. Module loaded (non-persistent, use setup.sh for permanent install)."
 
 clean:
 	rm -rf $(BUILD_DIR)
