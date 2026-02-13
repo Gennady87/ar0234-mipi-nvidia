@@ -102,8 +102,11 @@ For manual builds without DKMS:
 
 ```bash
 make              # build everything (dtbo + kernel module)
-sudo make install # install to /boot and /lib/modules
+sudo make install # copy dtbo to /boot, rmmod + insmod the module
 ```
+
+> [!NOTE]
+> The module is loaded immediately via `insmod` but won't persist across reboots. Use `sudo ./setup.sh` for permanent installation via DKMS.
 
 Individual targets:
 
