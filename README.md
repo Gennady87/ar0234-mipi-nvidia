@@ -1,6 +1,7 @@
 # ar0234 MIPI NVIDIA driver
 
-Tested with NVIDIA Jetson Linux 36.4.4 (JetPack 6.2.1).
+![JetPack 6.2.1](https://img.shields.io/badge/JetPack_6.2.1-L4T_36.4.4-green?logo=nvidia&logoColor=white)
+![JetPack 6.2.2](https://img.shields.io/badge/JetPack_6.2.2-L4T_36.5.0-green?logo=nvidia&logoColor=white)
 
 ## Quickstart
 
@@ -54,14 +55,14 @@ sudo rm /var/nvidia/nvcam/settings/camera_overrides.isp
 
 ---
 
-Use the Jetson-IO tool to configure the 24-pin CSI connector:
+Use the Jetson-IO tool to configure the CSI connector:
 
 ```bash
 sudo /opt/nvidia/jetson-io/jetson-io.py
 ```
 
 Navigate through the menu:
-1. Configure Jetson 24pin CSI Connector
+1. Configure Jetson CSI Connector (named "22pin" on 6.2.2, "24pin" on 6.2.1)
 2. Configure for compatible hardware
 3. Select Camera AR0234-A
 
