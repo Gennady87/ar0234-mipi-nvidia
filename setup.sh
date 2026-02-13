@@ -29,6 +29,15 @@ if dkms status "${PACKAGE_NAME}/${VERSION}" 2>/dev/null | grep -q .; then
     dkms remove "${PACKAGE_NAME}/${VERSION}" --all 2>/dev/null || true
 fi
 
+# --- Back up and remove stock NVIDIA ar0234 driver if present ---
+# JetPack ships a pre-installed nv_ar0234.ko that conflicts with the DKMS build.
+
+STOCK_KO="/lib/modules/$(uname -r)/updates/drivers/media/i2c/nv_ar0234.ko"
+if [ -f "$STOCK_KO" ]; then
+    echo "Backing up stock driver: ${STOCK_KO} -> ${STOCK_KO}.bak"
+    mv "$STOCK_KO" "${STOCK_KO}.bak"
+fi
+
 # --- Copy source to DKMS tree ---
 
 echo "Copying driver source to ${DKMS_SRC}"
