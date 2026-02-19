@@ -97,6 +97,32 @@ gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 ! \
 nvgstcapture-1.0 --sensor-id 0
 ```
 
+## Test mode
+
+The sensor has a built-in test pattern generator that can be used to verify data validity.
+
+After running `sudo ./setup.sh` the driver is installed and loaded automatically at boot.  
+The `test_mode` module parameter can then be controlled at runtime via sysfs:
+
+```bash
+# 100% color-bar test pattern (test_mode = 2)
+echo 2 | sudo tee /sys/module/nv_ar0234/parameters/test_mode
+```
+
+To turn the test pattern off:
+
+```bash
+echo 0 | sudo tee /sys/module/nv_ar0234/parameters/test_mode
+```
+
+| Test pattern code | Description |
+| ----------------- | ----------- |
+| 0 | Off (normal operation) |
+| 1 | Solid color |
+| 2 | 100% color bar |
+| 3 | Fade-to-grey color bar |
+| 256 | Walking 1s (10-bit) |
+
 ## Development builds
 
 For manual builds without DKMS:

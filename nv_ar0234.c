@@ -40,6 +40,9 @@ static const struct of_device_id ar0234_of_match[] = {
 
 MODULE_DEVICE_TABLE(of, ar0234_of_match);
 
+static int test_mode;
+module_param(test_mode, int, 0644);
+
 static const u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_GAIN,
 	TEGRA_CAMERA_CID_EXPOSURE,
@@ -591,9 +594,21 @@ static int ar0234_set_mode(struct tegracam_device *tc_dev)
 
 static int ar0234_start_streaming(struct tegracam_device *tc_dev)
 {
+	struct camera_common_data *s_data = tc_dev->s_data;
+	int err;
+
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
 
-	return ar0234_write_reg_8(tc_dev->s_data, AR0234_REG_MODE_SELECT, 0x01);
+	if (test_mode) {
+		dev_dbg(tc_dev->dev, "test pattern mode %d\n", test_mode);
+
+		err = ar0234_write_reg_16(s_data, AR0234_REG_TEST_PATTERN_MODE,
+					  (u16)test_mode);
+		if (err)
+			return err;
+	}
+
+	return ar0234_write_reg_8(s_data, AR0234_REG_MODE_SELECT, 0x01);
 }
 
 static int ar0234_stop_streaming(struct tegracam_device *tc_dev)
