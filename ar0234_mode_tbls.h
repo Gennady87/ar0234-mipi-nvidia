@@ -35,6 +35,7 @@
 #define AR0234_REG_READ_MODE 0x3040
 #define AR0234_REG_ANALOG_GAIN 0x3060
 #define AR0234_REG_DATAPATH_SELECT 0x306E
+#define AR0234_REG_TEST_PATTERN_MODE 0x3070
 #define AR0234_REG_OPERATION_MODE_CTRL 0x3082
 #define AR0234_REG_SEQ_DATA_PORT 0x3086
 #define AR0234_REG_SEQ_CTRL_PORT 0x3088
@@ -124,13 +125,8 @@ static struct reg_16 ar0234_mode_1920x1200[] = {
 	{ AR0234_TABLE_END, 0x00 },
 };
 
-static struct reg_16 ar0234_mode_test_pattern[] = {
-	/* TODO */
-};
-
 enum { AR0234_MODE_1920X1200,
        AR0234_MODE_COMMON,
-       AR0234_MODE_TEST_PATTERN,
        AR0234_PLL_CONFIG_24_450_10BIT,
        AR0234_PIXCLK_45MHZ_MFR_SETTINGS,
 };
@@ -138,7 +134,6 @@ enum { AR0234_MODE_1920X1200,
 static struct reg_16 *mode_table[] = {
 	[AR0234_MODE_1920X1200] = ar0234_mode_1920x1200,
 	[AR0234_MODE_COMMON] = ar0234_mode_common,
-	[AR0234_MODE_TEST_PATTERN] = ar0234_mode_test_pattern,
 	[AR0234_PLL_CONFIG_24_450_10BIT] = ar0234_pll_config_24_450_10bit,
 	[AR0234_PIXCLK_45MHZ_MFR_SETTINGS] = ar0234_pixclk_45mhz_mfr_settings,
 };
