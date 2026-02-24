@@ -121,6 +121,9 @@
 				clock-names = "extperiph1";
 				mclk = "extperiph1";
 
+				pinctrl-names = "default";
+				pinctrl-0 = <&cam_mclk_active>;
+
 				/* if true, delay gain setting by one frame to be in sync with exposure */
 				delayed_gain = "false";
 
@@ -188,9 +191,9 @@
 	fragment@4 {
 		target = <&pinmux>;
 		__overlay__ {
-			extperiph1_clk_pp0 {
+			cam_mclk_active: cam-mclk-active {
 				nvidia,pins = "extperiph1_clk_pp0";
-				nvidia,function = "extperiph1_clk";
+				nvidia,function = "extperiph1";
 				nvidia,pull = <0x0>;
 				nvidia,tristate = <0x0>;
 				nvidia,enable-input = <0x0>;
