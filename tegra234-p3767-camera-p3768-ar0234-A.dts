@@ -10,11 +10,12 @@
 #define CAM_I2C_MUX 	TEGRA234_AON_GPIO(CC, 3)
 
 #include <dt-bindings/tegra234-p3767-0000-common.h>
+#include <dt-bindings/clock/tegra234-clock.h>
 
 / {
 	overlay-name = "Camera AR0234-A";
 	jetson-header-name = "Jetson 22pin CSI Connector";
-	compatible = JETSON_COMPATIBLE_P3768;
+	compatible = "nvidia,p3768-0000+p3767-0005-super", JETSON_COMPATIBLE_P3768;
 	/* AR0234 connected to cam0 port */
 
 	fragment@0 {
@@ -87,7 +88,7 @@
 						orientation = "0";
 						drivernode0 {
 							pcl_id = "v4l2_sensor";
-							sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/rbpcv3_ar0234_a@10";
+							sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/rbpcv3_ar0234_a@0c";
 						};
 					};
 				};
@@ -133,17 +134,22 @@
 						reg = <0>;
 						#address-cells = <1>;
 						#size-cells = <0>;
-						rbpcv3_ar0234_a@10 {
+						rbpcv3_ar0234_a@0c {
 							reset-gpios = <&gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
 							compatible = "onnn,ar0234cs";
 							/* I2C device address */
-							reg = <0x10>;
+							reg = <0x0c>;
 							/* V4L2 device node location */
 							devnode = "video0";
 							/* Physical dimensions of sensor */
 							physical_w = "5.78";
 							physical_h = "3.62";
 							sensor_model = "ar0234";
+
+							clocks = <&bpmp_clks TEGRA234_CLK_EXTPERIPH1>;
+							clock-names = "extperiph1";
+							mclk = "extperiph1";
+
 							/* Define any required hw resources needed by driver */
 							/* ie. clocks, io pins, power sources */
 							/* Defines number of frames to be dropped by driver internally after applying */

@@ -15,6 +15,7 @@
 #include <linux/gpio.h>
 #include <linux/module.h>
 #include <linux/seq_file.h>
+#include <linux/clk.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
@@ -315,6 +316,16 @@ static int ar0234_power_on(struct camera_common_data *s_data)
 	usleep_range(10, 20);
 
 skip_power_seqn:
+	if (pw->mclk) {
+		err = clk_set_rate(pw->mclk, 24000000);
+		if (err)
+			dev_err(dev, "failed to set mclk rate\n");
+
+		err = clk_prepare_enable(pw->mclk);
+		if (err)
+			dev_err(dev, "failed to enable mclk\n");
+	}
+
 	if (pw->reset_gpio) {
 		usleep_range(1000, 2000);
 
@@ -373,6 +384,10 @@ static int ar0234_power_off(struct camera_common_data *s_data)
 			regulator_disable(pw->iovdd);
 		if (pw->avdd)
 			regulator_disable(pw->avdd);
+	}
+
+	if (pw->mclk) {
+		clk_disable_unprepare(pw->mclk);
 	}
 
 	pw->state = SWITCH_OFF;
