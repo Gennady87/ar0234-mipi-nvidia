@@ -335,7 +335,8 @@ skip_power_seqn:
 			gpio_set_value(pw->reset_gpio, 1);
 	}
 
-	usleep_range(10000, 20000);
+	/* AR0234 needs up to 150ms after reset for I2C to stabilize */
+	usleep_range(200000, 300000);
 
 	pw->state = SWITCH_ON;
 
@@ -654,11 +655,16 @@ static struct camera_common_sensor_ops ar0234_common_ops = {
 static int ar0234_board_setup(struct ar0234 *priv)
 {
 	struct camera_common_data *s_data = priv->s_data;
+	struct camera_common_power_rail *pw = s_data->power;
+	struct camera_common_pdata *pdata = s_data->pdata;
 	struct device *dev = s_data->dev;
 	u16 reg_val;
 	int err = 0;
 
-	/* Skip mclk enable as this camera module has an on-board oscillator */
+	dev_info(dev, "board_setup: mclk=%p mclk_name=%s reset_gpio=%d\n",
+		 pw->mclk,
+		 (pdata && pdata->mclk_name) ? pdata->mclk_name : "(null)",
+		 pw->reset_gpio);
 
 	err = ar0234_power_on(s_data);
 	if (err) {
