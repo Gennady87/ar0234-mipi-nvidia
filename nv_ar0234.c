@@ -16,6 +16,8 @@
 #include <linux/module.h>
 #include <linux/seq_file.h>
 #include <linux/clk.h>
+#include <linux/pinctrl/consumer.h>
+#include <linux/pinctrl/machine.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
@@ -324,6 +326,16 @@ skip_power_seqn:
 		err = clk_prepare_enable(pw->mclk);
 		if (err)
 			dev_err(dev, "failed to enable mclk\n");
+
+		/* Activate pinmux: route EXTPERIPH1 clock to physical pin PP0 */
+		{
+			struct pinctrl *pctl =
+				devm_pinctrl_get_select_default(dev);
+			if (IS_ERR(pctl))
+				dev_warn(dev,
+					 "pinctrl default state failed: %ld\n",
+					 PTR_ERR(pctl));
+		}
 	}
 
 	if (pw->reset_gpio) {
@@ -812,7 +824,38 @@ static struct i2c_driver ar0234_i2c_driver = {
 	.id_table = ar0234_id,
 };
 
-module_i2c_driver(ar0234_i2c_driver);
+/*
+ * Pinctrl mapping: route EXTPERIPH1 clock to physical pin PP0.
+ * Must be registered BEFORE the I2C driver probes, because the
+ * pinmux controller has already parsed its DT children at boot
+ * and won't pick up new groups added via overlay fragments.
+ */
+static const struct pinctrl_map ar0234_pinctrl_map[] = {
+	PIN_MAP_MUX_GROUP_DEFAULT("2-000c", /* I2C device */
+				  "2430000.pinmux", /* pinctrl controller */
+				  "extperiph1_clk_pp0", /* pin group */
+				  "extperiph1"), /* mux function */
+};
+
+static int __init ar0234_init(void)
+{
+	int err;
+
+	err = pinctrl_register_mappings(ar0234_pinctrl_map,
+					ARRAY_SIZE(ar0234_pinctrl_map));
+	if (err)
+		pr_warn("ar0234: pinctrl map registration failed: %d\n", err);
+
+	return i2c_add_driver(&ar0234_i2c_driver);
+}
+
+static void __exit ar0234_exit(void)
+{
+	i2c_del_driver(&ar0234_i2c_driver);
+}
+
+module_init(ar0234_init);
+module_exit(ar0234_exit);
 
 MODULE_DESCRIPTION("Media Controller driver for OnSemi AR0234");
 MODULE_AUTHOR("UAB Kurokesu");

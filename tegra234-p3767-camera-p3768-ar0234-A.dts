@@ -121,8 +121,7 @@
 				clock-names = "extperiph1";
 				mclk = "extperiph1";
 
-				pinctrl-names = "default";
-				pinctrl-0 = <&cam_mclk_active>;
+				/* pinmux configured programmatically via pinctrl_register_mappings in nv_ar0234.c */
 
 				/* if true, delay gain setting by one frame to be in sync with exposure */
 				delayed_gain = "false";
@@ -187,17 +186,4 @@
 		};
 	};
 
-	/* fragment@4: Pinmux — route EXTPERIPH1 clock to CAM0_MCLK pin (PP0) */
-	fragment@4 {
-		target = <&pinmux>;
-		__overlay__ {
-			cam_mclk_active: cam-mclk-active {
-				nvidia,pins = "extperiph1_clk_pp0";
-				nvidia,function = "extperiph1";
-				nvidia,pull = <0x0>;
-				nvidia,tristate = <0x0>;
-				nvidia,enable-input = <0x0>;
-			};
-		};
-	};
 };
