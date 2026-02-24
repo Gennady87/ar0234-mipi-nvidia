@@ -183,4 +183,18 @@
 			};
 		};
 	};
+
+	/* fragment@4: Pinmux — route EXTPERIPH1 clock to CAM0_MCLK pin (PP0) */
+	fragment@4 {
+		target = <&pinmux>;
+		__overlay__ {
+			extperiph1_clk_pp0 {
+				nvidia,pins = "extperiph1_clk_pp0";
+				nvidia,function = "extperiph1_clk";
+				nvidia,pull = <0x0>;
+				nvidia,tristate = <0x0>;
+				nvidia,enable-input = <0x0>;
+			};
+		};
+	};
 };
