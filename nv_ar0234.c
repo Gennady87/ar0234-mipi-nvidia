@@ -16,6 +16,7 @@
 #include <linux/module.h>
 #include <linux/seq_file.h>
 #include <linux/clk.h>
+#include <linux/io.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
@@ -23,6 +24,17 @@
 #include <media/tegra_v4l2_camera.h>
 #include <media/tegracam_core.h>
 #include "ar0234_mode_tbls.h"
+
+/*
+ * Tegra234 PADCTL: EXTPERIPH1_CLK_PP0 register.
+ * Base = 0x02430000, offset = 0x0008 (from upstream pinctrl-tegra234.c).
+ * Bit 10 = SFIO select: 0 = SFIO mode (clock output), 1 = GPIO mode.
+ * Bits [1:0] = mux function: 0 = EXTPERIPH1 (already set by firmware).
+ * We clear bit 10 to switch pin PP0 from GPIO to SFIO mode so that
+ * the EXTPERIPH1 clock signal physically reaches the camera connector.
+ */
+#define PADCTL_EXTPERIPH1_PP0_ADDR 0x02430008
+#define PADCTL_SFSEL_BIT 10
 
 /* AR0234 Register Definitions */
 #define AR0234_CHIP_ID 0x0A56
@@ -316,6 +328,25 @@ static int ar0234_power_on(struct camera_common_data *s_data)
 	usleep_range(10, 20);
 
 skip_power_seqn:
+	/* Switch PP0 from GPIO mode to SFIO mode so EXTPERIPH1 clock reaches the pin */
+	{
+		void __iomem *padctl = ioremap(PADCTL_EXTPERIPH1_PP0_ADDR, 4);
+		if (padctl) {
+			u32 val = readl(padctl);
+			if (val & BIT(PADCTL_SFSEL_BIT)) {
+				val &= ~BIT(PADCTL_SFSEL_BIT);
+				writel(val, padctl);
+				dev_info(
+					dev,
+					"PADCTL PP0: switched to SFIO mode (0x%08x)\n",
+					val);
+			}
+			iounmap(padctl);
+		} else {
+			dev_warn(dev, "PADCTL PP0: ioremap failed\n");
+		}
+	}
+
 	if (pw->mclk) {
 		err = clk_set_rate(pw->mclk, 24000000);
 		if (err)
