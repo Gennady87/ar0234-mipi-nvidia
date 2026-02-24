@@ -127,7 +127,7 @@
 					#address-cells = <1>;
 					#size-cells = <0>;
 					rbpcv3_ar0234_a@0c {
-						reset-gpios = <&gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
+						reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
 						compatible = "onnn,ar0234cs";
 						/* I2C device address */
 						reg = <0x0c>;
