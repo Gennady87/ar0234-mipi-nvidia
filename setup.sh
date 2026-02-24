@@ -50,6 +50,21 @@ cp "$SCRIPT_DIR/ar0234_mode_tbls.h" "$DKMS_SRC/"
 cp "$SCRIPT_DIR/tegra234-p3767-camera-p3768-ar0234-A.dts" "$DKMS_SRC/"
 cp -r "$SCRIPT_DIR/scripts" "$DKMS_SRC/"
 
+# --- Install modprobe.d config for EXTPERIPH1_CLK pinmux ---
+# The DT overlay cannot configure pinmux (cross-fragment phandle limitation
+# in JetPack 6 UEFI). Instead, we use modprobe's "install" directive to
+# switch pin PP0 to extperiph1 clock function via debugfs BEFORE loading
+# the driver module.
+
+MODPROBE_CONF="/etc/modprobe.d/nv-ar0234-pinmux.conf"
+cat > "$MODPROBE_CONF" <<'EOF'
+# Route EXTPERIPH1 clock to physical pin PP0 (CAM0_MCLK) before driver load
+install nv_ar0234 /bin/sh -c '\
+  echo "extperiph1_clk_pp0 extperiph1" > /sys/kernel/debug/pinctrl/2430000.pinmux/pinmux-select 2>/dev/null; \
+  /sbin/modprobe --ignore-install nv_ar0234'
+EOF
+echo "Installed ${MODPROBE_CONF}"
+
 # --- Fetch NVIDIA device tree header (requires internet) ---
 
 echo "Fetching NVIDIA device tree headers..."
